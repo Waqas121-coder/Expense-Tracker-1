@@ -2,42 +2,31 @@ import { Button } from '@material-ui/core';
 import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
-const DailyChart = () => {
-    const [currentMonth,setCurrentMonth]=useState(0)
-    const [monthlyData,setMonthlyData]=useState([
-        {
-          "timestamp": 182132325200,
-          "year": 2021,
-          "month": 4,
-          "date": 18,
-          "type": 1,
-          "amount": 10
-        },
-        {
-          "timestamp": 182132325200,
-          "year": 2021,
-          "month": 4,
-          "date": 18,
-          "type": 1,
-          "amount": 10
-        },
-        {
-          "timestamp": 182132325200,
-          "year": 2021,
-          "month": 4,
-          "date": 18,
-          "type": 0,
-          "amount": 10
-        },
-        {
-          "timestamp": 182132325200,
-          "year": 2021,
-          "month": 4,
-          "date": 20,
-          "type": 1,
-          "amount": 30
-        }
-      ])
+const DailyChart = props => {
+
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    const isLeapYear=year=>{
+        if(year%400===0)return 1
+        if(year%100===0)return 0
+        if(year%4===0) return 1
+        return 0
+    }
+
+    var nDays=[
+        [31,28,31,30,31,30,31,31,30,31,30,31],
+        [31,29,31,30,31,30,31,31,30,31,30,31]
+    ]
+
+    var labels=['']
+
+    for(var i=1;i<=nDays[isLeapYear()][props.month-1];i++)
+        labels.push(i)
+
+    const [currentMonth,setCurrentMonth]=useState(props.month)
+    const [monthlyData,setMonthlyData]=useState(props.data)
       let arr=new Array(32);
       for(let i=0;i<32;i++){
           arr[i]=0;
@@ -57,17 +46,32 @@ const DailyChart = () => {
             }
         }
         if(month==currentMonth){
-            arr[date-1]=expense;
+            arr[date]=expense;
         }
   });
+
+      const getMax=()=>{
+          var max=arr[0];
+          for(var i=1;i<arr.length;i++)
+              if(arr[i]>max)
+                  max=arr[i]
+          return max
+      }
+
+    const getMin=()=>{
+        var min=arr[0];
+        for(var i=1;i<arr.length;i++)
+            if(arr[i]<min)
+                min=arr[i]
+        return min
+    }
+
       console.log(arr);
     return (
         <div className="dailyChart">
-            <Button onClick={()=>setCurrentMonth(4)}>April</Button>
-            <Button onClick={()=>setCurrentMonth(5)}>May</Button>
             <Line
                 data={{
-                    labels: ['1', '1', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16','17', '18','19','20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31'],
+                    labels: labels,
                     datasets: [{
                         label: 'Daily Expense',
                         data: arr,
@@ -97,13 +101,14 @@ const DailyChart = () => {
                         yAxes: [{
                             ticks: {
                                 beginAtZero: true,
-                                max:50
+                                max:getMax(),
+                                min:getMin()
                             }
                         }]
                     },
                     title:{
                         display:true,
-                        text:currentMonth,
+                        text:monthNames[props.month-1]+', '+props.date.getFullYear(),
                         fontSize:25
                     },
                     maintainAspectRatio: false }}
