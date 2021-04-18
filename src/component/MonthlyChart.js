@@ -49,7 +49,7 @@ const MonthlyChart = props => {
                         data={{
                             labels: schemaData.labels,
                             datasets: [{
-                                label: 'Daily Expense',
+                                label: 'Monthly Expense',
                                 data: schemaData.data,
                                 backgroundColor: [
                                     'rgba(255, 99, 132, 0.2)',
@@ -71,7 +71,7 @@ const MonthlyChart = props => {
                             }]
                         }}
                         width={10}
-                        height={500}
+                        height={300}
                         options={{
                             scales: {
                                 yAxes: [{
