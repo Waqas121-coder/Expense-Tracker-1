@@ -136,6 +136,9 @@ const Console=props=>{
     const [withdrawDialog,setWithdrawDialog]=useState(false)
     const [withdrawLoading,setWithdrawLoading]=useState(false)
 
+
+    const [devDialog,setDevDialog]=useState(false)
+
     const amountRef=useRef()
     const causeRef=useRef()
 
@@ -341,7 +344,7 @@ const Console=props=>{
             </List>
             <div style={{bottom:0,position:'absolute'}}>
                 <List>
-                    <ListItem button>
+                    <ListItem onClick={()=>{setDevDialog(true)}} button>
                         <ListItemIcon><CodeIcon/></ListItemIcon>
                         <ListItemText primary={'Developers'} />
                     </ListItem>
@@ -352,6 +355,27 @@ const Console=props=>{
 
     return(
         <div className={classes.root}>
+
+            <Dialog open={devDialog}>
+                <DialogTitle>
+                    Developers
+                </DialogTitle>
+
+                <DialogContent>
+
+                </DialogContent>
+
+                <DialogActions>
+                    <Button
+                        onClick={()=>{setDevDialog(false)}}
+                        color={'secondary'}>
+                        Close
+                    </Button>
+                </DialogActions>
+
+            </Dialog>
+
+
             <Dialog open={addDialog}>
                 {
                     addLoading?(
