@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import {Button} from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import WorkIcon from '@material-ui/icons/Work';
@@ -31,6 +31,26 @@ import LockIcon from '@material-ui/icons/Lock';
 import CodeIcon from '@material-ui/icons/Code';
 import firebase from "firebase/app"
 import "firebase/auth"
+import "firebase/firestore"
+import {showToast} from "../App";
+import AddBoxIcon from '@material-ui/icons/AddBox';
+import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import TextField from "@material-ui/core/TextField";
+import DialogActions from "@material-ui/core/DialogActions";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import AccessAlarmIcon from '@material-ui/icons/AccessAlarm';
+import EventIcon from '@material-ui/icons/Event';
+import AcUnitIcon from '@material-ui/icons/AcUnit';
+import Grid from "@material-ui/core/Grid";
+import Day from "./Day";
+import Month from "./Month";
+import Year from "./Year";
+
 
 const drawerWidth = 250;
 
@@ -104,6 +124,21 @@ const Console=props=>{
     const [mobileOpen, setMobileOpen] = useState(false);
     const [menu,setMenu]=useState(1)
 
+    const [balance,setBalance]=useState(null)
+
+    const [date,setDate]=useState(new Date())
+
+    const [addDialog,setAddDialog]=useState(false)
+    const [addLoading,setAddLoading]=useState(false)
+
+    const [version,setVersion]=useState(Date.now())
+
+    const [withdrawDialog,setWithdrawDialog]=useState(false)
+    const [withdrawLoading,setWithdrawLoading]=useState(false)
+
+    const amountRef=useRef()
+    const causeRef=useRef()
+
     const [anchorEl, setAnchorEl] = useState(null);
 
     const handleClick = (event) => {
@@ -127,8 +162,95 @@ const Console=props=>{
 
 
 
+
+
+    const syncBalance=()=>{
+        firebase.firestore().collection('balance').doc(firebase.auth().currentUser.uid).get().then(doc=>{
+            if(doc.exists){
+                setBalance(doc.data().balance)
+            }
+            else{
+                syncBalance()
+            }
+        })
+    }
+
+    const addClick=()=>{
+        const amount=amountRef.current.value
+        if(amount<=0)
+            showToast('Invalid cash in amount')
+        else{
+            setAddLoading(true)
+            firebase.firestore().collection('transaction').add({
+                timestamp:Date.now(),
+                year:date.getFullYear(),
+                month:date.getMonth()+1,
+                date:date.getDate(),
+                type:1,
+                amount:parseFloat(amount),
+                uid:firebase.auth().currentUser.uid
+            }).then(()=>{
+                firebase.firestore().collection('balance').doc(firebase.auth().currentUser.uid).update({
+                    balance:firebase.firestore.FieldValue.increment(parseFloat(amount))
+                }).then(()=>{
+                    setAddLoading(false)
+                    setAddDialog(false)
+                    showToast(`$${amount}/= added to your wallet`)
+                    syncBalance()
+                    setVersion(Date.now())
+                }).catch(err=>{
+                    setAddLoading(false)
+                    showToast(err.message)
+                })
+            }).catch(err=>{
+                setAddLoading(false)
+                showToast(err.message)
+            })
+        }
+    }
+
+    const withdrawClick=()=>{
+        const amount=amountRef.current.value
+        const cause=causeRef.current.value
+        if(amount<=0)
+            showToast('Invalid withdraw amount')
+        else if(cause.length===0)
+            showToast('Please enter cause of withdrawal')
+        else{
+            setWithdrawLoading(true)
+            firebase.firestore().collection('transaction').add({
+                timestamp:Date.now(),
+                year:date.getFullYear(),
+                month:date.getMonth()+1,
+                date:date.getDate(),
+                type:0,
+                amount:parseFloat(amount),
+                uid:firebase.auth().currentUser.uid,
+                cause:cause
+            }).then(()=>{
+                firebase.firestore().collection('balance').doc(firebase.auth().currentUser.uid).update({
+                    balance:firebase.firestore.FieldValue.increment(-parseFloat(amount))
+                }).then(()=>{
+                    setWithdrawLoading(false)
+                    setWithdrawDialog(false)
+                    showToast(`$${amount}/= withdrawed from your wallet`)
+                    syncBalance()
+                    setVersion(Date.now())
+                }).catch(err=>{
+                    setWithdrawLoading(false)
+                    showToast(err.message)
+                })
+            }).catch(err=>{
+                setWithdrawLoading(false)
+                showToast(err.message)
+            })
+        }
+    }
+
+
     useEffect(()=>{
-        console.log(firebase.auth().currentUser)
+        showToast(`Welcome ${firebase.auth().currentUser.displayName}`)
+        syncBalance()
     },[])
 
     const drawer = (
@@ -156,30 +278,65 @@ const Console=props=>{
                     {firebase.auth().currentUser.displayName}
                 </div>
             </center>
+            <center>
+                <div style={{marginTop:'20px',fontSize:'2.5em',color:'#0090ff'}}>
+                    {
+                        balance===null?(
+                            <div>
+                                ...
+                            </div>
+                        ):(
+                            balance>0?(
+                                <div>
+                                    ${balance}/=
+                                </div>
+                            ):(
+                                <div style={{color:'#aa0000'}}>
+                                    ${balance}/=
+                                </div>
+                            )
+
+                        )
+                    }
+                </div>
+            </center>
+
+            <center>
+                <div style={{marginTop:'20px'}}>
+                    <Button
+                        variant={'outlined'}
+                        color={'primary'}
+                        onClick={()=>{setAddDialog(true)}}
+                        startIcon={<AddBoxIcon/>}>
+
+                        In
+
+                    </Button>
+
+                    <Button
+                        variant={'outlined'}
+                        color={'secondary'}
+                        onClick={()=>{setWithdrawDialog(true)}}
+                        style={{marginLeft:'5px'}}
+                        startIcon={<IndeterminateCheckBoxIcon/>}>
+
+                        Out
+
+                    </Button>
+                </div>
+            </center>
             <List style={{marginTop:'20px'}}>
                 <ListItem selected={menu==1} onClick={()=>{setMenu(1)}} button>
-                    <ListItemIcon><AccountBoxIcon /> </ListItemIcon>
-                    <ListItemText primary={'My Profile'} />
+                    <ListItemIcon><AccessAlarmIcon /> </ListItemIcon>
+                    <ListItemText primary={'Today'} />
                 </ListItem>
                 <ListItem selected={menu==2} onClick={()=>{setMenu(2)}} button>
-                    <ListItemIcon><EditIcon /> </ListItemIcon>
-                    <ListItemText primary={'Edit Profile'} />
+                    <ListItemIcon><EventIcon /> </ListItemIcon>
+                    <ListItemText primary={'This Month'} />
                 </ListItem>
                 <ListItem selected={menu==3} onClick={()=>{setMenu(3)}} button>
-                    <ListItemIcon><OfflineBoltIcon /> </ListItemIcon>
-                    <ListItemText primary={'Circulars'} />
-                </ListItem>
-                <ListItem selected={menu==4} onClick={()=>{setMenu(4)}} button>
-                    <ListItemIcon><DescriptionIcon /> </ListItemIcon>
-                    <ListItemText primary={'My Applications'} />
-                </ListItem>
-                <ListItem selected={menu==5} onClick={()=>{setMenu(5)}} button>
-                    <ListItemIcon><AssignmentTurnedInIcon /> </ListItemIcon>
-                    <ListItemText primary={'Admit Card'} />
-                </ListItem>
-                <ListItem selected={menu==6} onClick={()=>{setMenu(6)}} button>
-                    <ListItemIcon><LockIcon /> </ListItemIcon>
-                    <ListItemText primary={'My Account'} />
+                    <ListItemIcon><AcUnitIcon /> </ListItemIcon>
+                    <ListItemText primary={'This Year'} />
                 </ListItem>
             </List>
             <div style={{bottom:0,position:'absolute'}}>
@@ -195,6 +352,85 @@ const Console=props=>{
 
     return(
         <div className={classes.root}>
+            <Dialog open={addDialog}>
+                {
+                    addLoading?(
+                        <LinearProgress/>
+                    ):(
+                        <div/>
+                    )
+                }
+                <DialogTitle>
+                    Cash In
+                </DialogTitle>
+                <DialogContent>
+                    <TextField
+                        inputRef={amountRef}
+                        variant={'outlined'}
+                        type={'number'}
+                        label={'Amount ($)'}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        disabled={addLoading}
+                        onClick={()=>{setAddDialog(false)}}
+                        color={'secondary'}>
+                        Cancel
+                    </Button>
+                    <Button
+                        disabled={addLoading}
+                        onClick={addClick}
+                        color={'primary'}>
+                        Cash In
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={withdrawDialog}>
+                {
+                    withdrawLoading?(
+                        <LinearProgress/>
+                    ):(
+                        <div/>
+                    )
+                }
+                <DialogTitle>
+                    Withdraw
+                </DialogTitle>
+                <DialogContent>
+                    <center>
+                    <TextField
+                        inputRef={amountRef}
+                        variant={'outlined'}
+                        type={'number'}
+                        label={'Amount ($)'}
+                    />
+                    <br/>
+                        <br/>
+                    <TextField
+                        inputRef={causeRef}
+                        variant={'outlined'}
+                        multiline
+                        rows={2}
+                        label={'Cause'}
+                    />
+                    </center>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        disabled={withdrawLoading}
+                        onClick={()=>{setWithdrawDialog(false)}}
+                        color={'secondary'}>
+                        Cancel
+                    </Button>
+                    <Button
+                        disabled={withdrawLoading}
+                        onClick={withdrawClick}
+                        color={'primary'}>
+                        Withdraw
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <CssBaseline />
             <AppBar  style={{backgroundColor:'#0090ff',color:'#ffffff'}}  className={classes.appBar}>
                 <Toolbar>
@@ -273,6 +509,30 @@ const Console=props=>{
             </nav>
             <main className={classes.content}>
                 <div className={classes.toolbar} />
+                <Grid container>
+                    <Grid item xs={12}>
+                        <DatePicker dateFormat="dd/MM/yyyy" selected={date} inline onChange={d => setDate(d)} />
+                    </Grid>
+                    <Grid item xs={12}>
+                        {
+                            menu===1?(
+                                <Day date={date} version={version}/>
+                            ):(
+                                menu===2?(
+                                    <Month date={date} version={version}/>
+                                ):(
+                                    menu===3?(
+                                        <Year date={date} version={version}/>
+                                    ):(
+                                        <div/>
+                                    )
+                                )
+                            )
+                        }
+
+                    </Grid>
+                </Grid>
+
             </main>
         </div>
     )

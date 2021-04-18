@@ -10,16 +10,34 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 const Dashboard =props=>{
 
     const [auth,setAuth]=useState(true)
-    const [loading,setLoading]=useState(false)
+    const [loading,setLoading]=useState(true)
 
     useEffect(()=>{
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
                 setAuth(true)
+                firebase.firestore().collection('balance').doc(firebase.auth().currentUser.uid).get().then(doc=>{
+                    if(!doc.exists)
+                        firebase.firestore().collection('balance').doc(firebase.auth().currentUser.uid).set({
+                            balance:0
+                        }).then(()=>{
+                            setLoading(false)
+                        }).catch(err=>{
+                            setLoading(false)
+                            showToast(err.message)
+                        })
+                    else{
+                        setLoading(false)
+                    }
+
+                }).catch(err=>{
+                    setLoading(false)
+                    showToast(err.message)
+                })
             } else {
                 setAuth(false)
+                setLoading(false)
             }
-            setLoading(false)
         });
     },[])
 
