@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import firebase from "firebase";
 import {showToast} from "../App";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import DailyChart from "./DailyChart";
 
 const Month=props=>{
 
@@ -47,6 +48,7 @@ const Month=props=>{
                     <LinearProgress/>
                 ):(
                     <div>
+                        <DailyChart data={dataPoints} date={date} month={parseInt(date.getMonth()+1)}/>
                     </div>
                 )
             }
