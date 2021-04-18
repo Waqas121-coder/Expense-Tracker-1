@@ -2,11 +2,19 @@ import React, {useEffect, useState} from 'react'
 import firebase from "firebase";
 import {showToast} from "../App";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import DailyChart from "./DailyChart";
+import MonthlyChart from "./MonthlyChart";
 
 const Year=props=>{
     const [date,setDate]=useState(props.date)
     const [loading,setLoading]=useState(true)
     const [dataPoints,setDataPoints]=useState([])
+
+    const [version,setVersion]=useState(props.version)
+
+    useEffect(()=>{
+        setVersion(props.version)
+    },[props.version])
 
     useEffect(()=>{
         setDate(props.date)
@@ -45,6 +53,7 @@ const Year=props=>{
                     <LinearProgress/>
                 ):(
                     <div>
+                        <MonthlyChart version={version} data={dataPoints} date={date} year={date.getFullYear()}/>
                     </div>
                 )
             }

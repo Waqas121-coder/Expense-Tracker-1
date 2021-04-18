@@ -10,9 +10,16 @@ const Month=props=>{
     const [loading,setLoading]=useState(true)
     const [dataPoints,setDataPoints]=useState([])
 
+    const [version,setVersion]=useState(props.version)
+
     useEffect(()=>{
         setDate(props.date)
     },[props.date])
+
+
+    useEffect(()=>{
+        setVersion(props.version)
+    },[props.version])
 
     useEffect(()=>{
         console.log(dataPoints)
@@ -48,7 +55,7 @@ const Month=props=>{
                     <LinearProgress/>
                 ):(
                     <div>
-                        <DailyChart data={dataPoints} date={date} month={parseInt(date.getMonth()+1)}/>
+                        <DailyChart version={version} data={dataPoints} date={date} month={parseInt(date.getMonth()+1)}/>
                     </div>
                 )
             }
