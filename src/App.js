@@ -36,7 +36,6 @@ function App() {
             pauseOnHover
         />
         <Dashboard/>
-        <MonthlyChart />
       </div>
   );
 }
