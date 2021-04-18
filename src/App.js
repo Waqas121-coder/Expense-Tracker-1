@@ -3,6 +3,8 @@ import './App.css';
 import Dashboard from "./component/Dashboard";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import MonthlyChart from './component/MonthlyChart';
+import DailyChart from './component/DailyChart';
 
 var showToast
 
@@ -34,6 +36,7 @@ function App() {
             pauseOnHover
         />
         <Dashboard/>
+        <MonthlyChart />
       </div>
   );
 }
