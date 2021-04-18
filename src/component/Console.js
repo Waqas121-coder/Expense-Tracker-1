@@ -116,6 +116,25 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+const Person=props=>{
+    return(
+        <Grid container>
+            <Grid item xs={3}>
+                <Avatar src={props.image}/>
+            </Grid>
+            <Grid item xs={8}>
+                <div style={{fontSize:'1.2em'}}>
+                    {props.name}
+                </div>
+                <div style={{fontSize:'1.2em'}}>
+                    {props.email}
+                </div>
+            </Grid>
+
+        </Grid>
+    )
+}
+
 const Console=props=>{
 
     const { window } = props;
@@ -356,13 +375,23 @@ const Console=props=>{
     return(
         <div className={classes.root}>
 
-            <Dialog open={devDialog}>
+            <Dialog open={devDialog} fullWidth>
                 <DialogTitle>
                     Developers
                 </DialogTitle>
 
-                <DialogContent>
-
+                <DialogContent fullWidth>
+                    <Person
+                        image={'https://buet-edu-1.s3.amazonaws.com/auto_upload/0RMFi9mrPNe7mol2JwcZAf40F3n2/1618752944112.jpg'}
+                        name={'Md. Samirul Alam'}
+                        email={'samirul1919@cseku.ac.bd'}
+                    />
+                    <Divider style={{marginTop:'10px',marginBottom:'10px'}}/>
+                    <Person
+                        image={'https://buet-edu-1.s3.amazonaws.com/auto_upload/0RMFi9mrPNe7mol2JwcZAf40F3n2/1618752976128.jpg'}
+                        name={'Md. Mehrab Haque'}
+                        email={'1805001@ugrad.cse.buet.ac.bd'}
+                    />
                 </DialogContent>
 
                 <DialogActions>
