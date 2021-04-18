@@ -87,7 +87,7 @@ const DailyChart = props => {
                             }]
                         }}
                         width={10}
-                        height={500}
+                        height={300}
                         options={{
                             scales: {
                                 yAxes: [{

@@ -8,6 +8,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Button from "@material-ui/core/Button";
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import {showToast} from "../App";
+import "./Login.css"
 
 
 
@@ -49,10 +50,20 @@ const Login = props=>{
                     )
                 }
                 <DialogTitle>
-                    Sign in using google<br/>
+                    <center>
+                    <p>Welcome to</p>
+                    </center>
+                    <center>
+                    <h1>Expense Tracker</h1>
+                    <small>Every Penny Counts</small>
+                    </center>
+                   <center>
+                   <br />
+                   <br />
                     <GButton startIcon={<AssignmentIndIcon/>} onClick={googleAuth}  style={{marginTop:'5px',marginBottom:'8px'}} variant="contained" color="primary" >
                         Sign In using Google
                     </GButton>
+                   </center>
                 </DialogTitle>
             </Dialog>
         </div>
