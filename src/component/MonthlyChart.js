@@ -49,7 +49,7 @@ const MonthlyChart = props => {
                         data={{
                             labels: schemaData.labels,
                             datasets: [{
-                                label: 'Monthly Expense',
+                                label: 'Monthly Remaining cash',
                                 data: schemaData.data,
                                 backgroundColor: [
                                     'rgba(255, 99, 132, 0.2)',

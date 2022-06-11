@@ -65,7 +65,7 @@ const DailyChart = props => {
                         data={{
                             labels: schemaData.labels,
                             datasets: [{
-                                label: 'Daily Expense',
+                                label: 'Daily Remaining cash',
                                 data: schemaData.data,
                                 backgroundColor: [
                                     'rgba(255, 99, 132, 0.2)',
@@ -109,6 +109,7 @@ const DailyChart = props => {
             }
 
         </div>
+
     )
 }
 

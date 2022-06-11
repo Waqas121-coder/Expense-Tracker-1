@@ -50,6 +50,7 @@ import Grid from "@material-ui/core/Grid";
 import Day from "./Day";
 import Month from "./Month";
 import Year from "./Year";
+import { Check } from '@material-ui/icons';
 
 
 const drawerWidth = 250;
@@ -160,6 +161,7 @@ const Console=props=>{
 
     const amountRef=useRef()
     const causeRef=useRef()
+    const causeRef1=useRef()
 
     const [anchorEl, setAnchorEl] = useState(null);
 
@@ -199,8 +201,11 @@ const Console=props=>{
 
     const addClick=()=>{
         const amount=amountRef.current.value
+        const cause=causeRef1.current.value
         if(amount<=0)
             showToast('Invalid cash in amount')
+            else if(cause.length===0)
+                showToast('Please enter cause of click')
         else{
             setAddLoading(true)
             firebase.firestore().collection('transaction').add({
@@ -210,14 +215,15 @@ const Console=props=>{
                 date:date.getDate(),
                 type:1,
                 amount:parseFloat(amount),
-                uid:firebase.auth().currentUser.uid
+                uid:firebase.auth().currentUser.uid,
+                cause:cause
             }).then(()=>{
                 firebase.firestore().collection('balance').doc(firebase.auth().currentUser.uid).update({
                     balance:firebase.firestore.FieldValue.increment(parseFloat(amount))
                 }).then(()=>{
                     setAddLoading(false)
                     setAddDialog(false)
-                    showToast(`$${amount}/= added to your wallet`)
+                    showToast(`${amount}$ added to your wallet`)
                     syncBalance()
                     setVersion(Date.now())
                 }).catch(err=>{
@@ -255,7 +261,7 @@ const Console=props=>{
                 }).then(()=>{
                     setWithdrawLoading(false)
                     setWithdrawDialog(false)
-                    showToast(`$${amount}/= withdrawed from your wallet`)
+                    showToast(`${amount}$ withdrawed from your wallet`)
                     syncBalance()
                     setVersion(Date.now())
                 }).catch(err=>{
@@ -310,11 +316,11 @@ const Console=props=>{
                         ):(
                             balance>0?(
                                 <div>
-                                    ${balance}/=
+                                    {balance}$
                                 </div>
                             ):(
                                 <div style={{color:'#aa0000'}}>
-                                    ${balance}/=
+                                    {balance}$
                                 </div>
                             )
 
@@ -331,7 +337,7 @@ const Console=props=>{
                         onClick={()=>{setAddDialog(true)}}
                         startIcon={<AddBoxIcon/>}>
 
-                        In
+                        Cash In
 
                     </Button>
 
@@ -382,16 +388,12 @@ const Console=props=>{
 
                 <DialogContent fullWidth>
                     <Person
-                        image={'https://buet-edu-1.s3.amazonaws.com/auto_upload/0RMFi9mrPNe7mol2JwcZAf40F3n2/1618752944112.jpg'}
-                        name={'Md. Samirul Alam'}
-                        email={'samirul1919@cseku.ac.bd'}
+                        // image={'https://buet-edu-1.s3.amazonaws.com/auto_upload/0RMFi9mrPNe7mol2JwcZAf40F3n2/1618752944112.jpg'}
+                        name={'Waqas Ali Siddiqi'}
+                        email={'waqasalisiddiqi121@gmail.com'}
                     />
                     <Divider style={{marginTop:'10px',marginBottom:'10px'}}/>
-                    <Person
-                        image={'https://buet-edu-1.s3.amazonaws.com/auto_upload/0RMFi9mrPNe7mol2JwcZAf40F3n2/1618752976128.jpg'}
-                        name={'Md. Mehrab Haque'}
-                        email={'1805001@ugrad.cse.buet.ac.bd'}
-                    />
+                   
                 </DialogContent>
 
                 <DialogActions>
@@ -417,12 +419,25 @@ const Console=props=>{
                     Cash In
                 </DialogTitle>
                 <DialogContent>
+                <center>
                     <TextField
                         inputRef={amountRef}
                         variant={'outlined'}
                         type={'number'}
                         label={'Amount ($)'}
                     />
+                    
+                    <br/>
+                        <br/>
+                    
+                    <TextField
+                        inputRef={causeRef1}
+                        variant={'outlined'}
+                        multiline
+                        rows={2}
+                        label={'Cause'}
+                    />
+                    </center>
                 </DialogContent>
                 <DialogActions>
                     <Button
@@ -506,7 +521,7 @@ const Console=props=>{
                     </IconButton>
 
                     <Typography variant="h6" noWrap>
-                        Expense Tracker
+                        Bill Generator
                     </Typography>
                     <div  style={{position:'absolute',right:'10px',display:'flex'}}>
                         <IconButton
