@@ -105,7 +105,6 @@ const Day = (props) => {
 
   function deletecashout(timestamp){
     console.log(timestamp);
-    // // alert()
     
   firebase.database().ref(timestamp).remove(timestamp)
     // firebase
