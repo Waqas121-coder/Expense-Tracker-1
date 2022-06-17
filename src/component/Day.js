@@ -12,8 +12,10 @@ import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import { toast } from "react-toastify";
 
+// import { doc, deleteDoc } from "firebase/firestore";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -89,7 +91,7 @@ const Day = (props) => {
       })
       .catch((err) => {
         setLoading(false);
-        console.log(err);
+        // console.log(err);
         showToast(err.message);
       });
   }, [date, props.version]);
@@ -103,22 +105,33 @@ const Day = (props) => {
     return sum;
   };
 
-  function deletecashout(timestamp){
-    console.log(timestamp);
-    
-  firebase.database().ref(timestamp).remove(timestamp)
-    // firebase
-    // .firestore()
-    // .collection("transaction")
-    // .where("uid", "==", firebase.auth().currentUser.uid)
-    // .get()
-    // .then((result)=>{
-    //   console.log(result);
-    // })
-    
+  function deletecashout(dataPoint) {
+    firebase
+      .firestore()
+      .collection("transaction")
+      .doc(dataPoint.id)
+      .delete()
+      .then(() => {
+        toast.success("Data deleted successfully");
+        setDate(date);
+      })
+      .catch((err) => {
+        alert(err);
+      });
   }
-  function deletecashin(){
-    alert()
+  function deletecashin(dataPoint) {
+    firebase
+    .firestore()
+    .collection("transaction")
+    .doc(dataPoint.id)
+    .delete()
+    .then(()=>{
+      toast.success("Data deleted successfully")
+      setDate(date);
+    })
+    .catch((err)=>{
+      alert(err)
+    })
   }
   return (
     <div>
@@ -135,20 +148,19 @@ const Day = (props) => {
                 item
                 xs={12}
               >
- <center>
-        <div style={{ marginTop: "6px" }}>
-         <Button 
-            style={{ marginLeft: "5px" }}
-            variant={"outlined"}
-            // onClick={logoutClick}
-            endIcon={<ExitToAppIcon/>}
-            color={"secondary"}
-          >
-            PDF
-          </Button>
-         
-        </div>
-      </center>
+                <center>
+                  <div style={{ marginTop: "6px" }}>
+                    <Button
+                      style={{ marginLeft: "5px" }}
+                      variant={"outlined"}
+                      // onClick={logoutClick}
+                      endIcon={<ExitToAppIcon />}
+                      color={"secondary"}
+                    >
+                      PDF
+                    </Button>
+                  </div>
+                </center>
 
                 {getTotal() < 0 ? (
                   <div style={{ fontSize: "1.6em", color: "#aa0000" }}>
@@ -161,39 +173,57 @@ const Day = (props) => {
                 )}
               </Grid>
             )}
-            {dataPoints.map((dataPoint) => {
-              console.log(dataPoint);
+            {dataPoints.map((dataPoint, ind) => {
+              // console.log(dataPoint);
               return (
-                <Grid style={{ minHeight: "100%" }} item xs={6} md={2}>
+                <Grid
+                  style={{ minHeight: "100%" }}
+                  item
+                  xs={6}
+                  md={2}
+                  key={ind}
+                >
                   <Card className={classes.root1}>
                     <CardActionArea>
                       <CardContent>
                         {dataPoint.type === 0 ? (
+                          
                           <div style={{ fontSize: "1.5em", color: "#aa0000" }}>
                             Cash Out
-                            <button onClick={()=>deletecashout(dataPoint.timestamp)}
-                        style={{marginLeft:'38px',color:'rgb(170, 0, 0)',border:'0px solid rgb(170, 0, 0)', backgroundColor:'white'}}
-                        // variant={'outlined'}
-                        // onClick={deleteClick}
-                        // startIcon={<ExitToAppIcon/>}
-                        // color={'secondary'}
+                        <button
+                          onClick={() => deletecashout(dataPoint)}
+                          style={{
+                            color: "rgb(170, 0, 0)",
+                            border: "0px solid rgb(170, 0, 0)",
+                            backgroundColor: "white",
+                            position: "relative",
+                             bottom: "17px",
+                            left: "48px",
+                            fontSize: "16px"
+                          }}
                         >
-                        x
-                    </button>
+                          x
+                        </button>
                           </div>
                         ) : (
                           <div style={{ fontSize: "1.5em", color: "#00aa00" }}>
                             Cash In
-                            <button onClick={()=>deletecashin()}
-                        style={{marginLeft:'38px',color:'rgb(170, 0, 0)',border:'0px solid rgb(170, 0, 0)', backgroundColor:'white'}}
-                        // variant={'outlined'}
-                        // onClick={deleteClick}
-                        // startIcon={<ExitToAppIcon/>}
-                        // color={'secondary'}
+                            <button
+                          onClick={() => deletecashin(dataPoint)}
+                          style={{
+                            color: "rgb(0, 170, 0)",
+                            border: "0px solid rgb(170, 0, 0)",
+                            backgroundColor: "white",
+                            position: "relative",
+                             bottom: "17px",
+                            left: "65px",
+                            fontSize: "16px"
+                          }}
                         >
-                        x
-                    </button>
+                          x
+                        </button>
                           </div>
+                          
                         )}
                         <center style={{ marginTop: "20px" }}>
                           {dataPoint.type === 0 ? (
@@ -249,7 +279,6 @@ const Day = (props) => {
           </Grid>
         )}
       </div>
-     
     </div>
   );
 };
