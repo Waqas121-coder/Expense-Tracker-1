@@ -208,6 +208,8 @@ const Console=props=>{
                 showToast('Please enter cause of click')
         else{
             setAddLoading(true)
+            // console.log(Date.now());
+
             firebase.firestore().collection('transaction').add({
                 timestamp:Date.now(),
                 year:date.getFullYear(),

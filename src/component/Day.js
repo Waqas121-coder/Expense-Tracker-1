@@ -59,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Day = (props) => {
+  // console.log(props);
   const classes = useStyles();
 
   const [date, setDate] = useState(props.date);
@@ -112,6 +113,15 @@ const Day = (props) => {
       .doc(dataPoint.id)
       .delete()
       .then(() => {
+        firebase
+          .firestore()
+          .collection("balance")
+          .get()
+          .then((data) => {
+            data.docs.forEach((item) => {
+              console.log(item.data().balance);
+            });
+          });
         toast.success("Data deleted successfully");
         setDate(date);
       })
@@ -121,17 +131,17 @@ const Day = (props) => {
   }
   function deletecashin(dataPoint) {
     firebase
-    .firestore()
-    .collection("transaction")
-    .doc(dataPoint.id)
-    .delete()
-    .then(()=>{
-      toast.success("Data deleted successfully")
-      setDate(date);
-    })
-    .catch((err)=>{
-      alert(err)
-    })
+      .firestore()
+      .collection("transaction")
+      .doc(dataPoint.id)
+      .delete()
+      .then(() => {
+        toast.success("Data deleted successfully");
+        setDate(date);
+      })
+      .catch((err) => {
+        alert(err);
+      });
   }
   return (
     <div>
@@ -187,43 +197,41 @@ const Day = (props) => {
                     <CardActionArea>
                       <CardContent>
                         {dataPoint.type === 0 ? (
-                          
                           <div style={{ fontSize: "1.5em", color: "#aa0000" }}>
                             Cash Out
-                        <button
-                          onClick={() => deletecashout(dataPoint)}
-                          style={{
-                            color: "rgb(170, 0, 0)",
-                            border: "0px solid rgb(170, 0, 0)",
-                            backgroundColor: "white",
-                            position: "relative",
-                             bottom: "17px",
-                            left: "48px",
-                            fontSize: "16px"
-                          }}
-                        >
-                          x
-                        </button>
+                            <button
+                              onClick={() => deletecashout(dataPoint)}
+                              style={{
+                                color: "rgb(170, 0, 0)",
+                                border: "0px solid rgb(170, 0, 0)",
+                                backgroundColor: "white",
+                                position: "relative",
+                                bottom: "17px",
+                                left: "48px",
+                                fontSize: "16px",
+                              }}
+                            >
+                              x
+                            </button>
                           </div>
                         ) : (
                           <div style={{ fontSize: "1.5em", color: "#00aa00" }}>
                             Cash In
                             <button
-                          onClick={() => deletecashin(dataPoint)}
-                          style={{
-                            color: "rgb(0, 170, 0)",
-                            border: "0px solid rgb(170, 0, 0)",
-                            backgroundColor: "white",
-                            position: "relative",
-                             bottom: "17px",
-                            left: "65px",
-                            fontSize: "16px"
-                          }}
-                        >
-                          x
-                        </button>
+                              onClick={() => deletecashin(dataPoint)}
+                              style={{
+                                color: "rgb(0, 170, 0)",
+                                border: "0px solid rgb(170, 0, 0)",
+                                backgroundColor: "white",
+                                position: "relative",
+                                bottom: "17px",
+                                left: "65px",
+                                fontSize: "16px",
+                              }}
+                            >
+                              x
+                            </button>
                           </div>
-                          
                         )}
                         <center style={{ marginTop: "20px" }}>
                           {dataPoint.type === 0 ? (
@@ -242,7 +250,8 @@ const Day = (props) => {
                           color="textSecondary"
                           component="p"
                         >
-                          On {date.toLocaleString()}
+                          {/* On {dataPoint.timestamp.toLocaleDate() } */}
+                          On {new Date(dataPoint.timestamp).toLocaleString()}
                         </Typography>
                         {/* {
                                                         dataPoint.type===0?(
