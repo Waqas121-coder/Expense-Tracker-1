@@ -54,8 +54,8 @@ const Login = props=>{
                     <p>Welcome to</p>
                     </center>
                     <center>
-                    <h1>Expense Tracker</h1>
-                    <small>Every Penny Counts</small>
+                    <h1>Income & Expense Tracker</h1>
+                    <small>Every Money Counts By This Tracker</small>
                     </center>
                    <center>
                    <br />

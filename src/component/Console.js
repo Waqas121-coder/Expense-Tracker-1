@@ -137,6 +137,7 @@ const Person=props=>{
 }
 
 const Console=props=>{
+    const updateTotal= props.version
 
     const { window } = props;
     const classes = useStyles();
@@ -164,6 +165,8 @@ const Console=props=>{
     const causeRef1=useRef()
 
     const [anchorEl, setAnchorEl] = useState(null);
+
+    
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -281,7 +284,7 @@ const Console=props=>{
     useEffect(()=>{
         showToast(`Welcome ${firebase.auth().currentUser.displayName}`)
         syncBalance()
-    },[])
+    },[updateTotal])
 
     const drawer = (
         <div style={{padding:'10px'}}>

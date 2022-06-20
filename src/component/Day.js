@@ -14,6 +14,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { toast } from "react-toastify";
+import Console from "./Console";
 
 // import { doc, deleteDoc } from "firebase/firestore";
 
@@ -66,9 +67,11 @@ const Day = (props) => {
   const [loading, setLoading] = useState(true);
   const [dataPoints, setDataPoints] = useState([]);
 
+  const [version, setVersion] = useState(Date.now());
+
   useEffect(() => {
     setDate(props.date);
-  }, [props.date]);
+  }, [props.date, version]);
 
   useEffect(() => {
     firebase
@@ -95,7 +98,7 @@ const Day = (props) => {
         // console.log(err);
         showToast(err.message);
       });
-  }, [date, props.version]);
+  }, [date, props.version, version]);
 
   const getTotal = () => {
     var sum = 0;
@@ -107,6 +110,7 @@ const Day = (props) => {
   };
 
   function deletecashout(dataPoint) {
+    setLoading(true);
     firebase
       .firestore()
       .collection("transaction")
@@ -119,26 +123,62 @@ const Day = (props) => {
           .get()
           .then((data) => {
             data.docs.forEach((item) => {
-              console.log(item.data().balance);
+              firebase
+                .firestore()
+                .collection("balance")
+                .doc(firebase.auth().currentUser.uid)
+                .update({
+                  balance: firebase.firestore.FieldValue.increment(
+                    parseFloat(dataPoint.amount)
+                  ),
+                });
             });
           });
         toast.success("Data deleted successfully");
         setDate(date);
+        setVersion(Date.now());
+        setLoading(false);
       })
       .catch((err) => {
         alert(err);
       });
   }
   function deletecashin(dataPoint) {
+    setLoading(true);
+
     firebase
       .firestore()
       .collection("transaction")
       .doc(dataPoint.id)
       .delete()
+
       .then(() => {
+        firebase
+          .firestore()
+          .collection("balance")
+          .get()
+          .then((data) => {
+            data.docs.forEach(() => {
+              firebase
+                .firestore()
+                .collection("balance")
+                .doc(firebase.auth().currentUser.uid)
+                .update({
+                  balance: firebase.firestore.FieldValue.increment(
+                    -parseFloat(dataPoint.amount)
+                  ),
+                });
+              // console.log(item.data().balance);
+            });
+          });
         toast.success("Data deleted successfully");
-        setDate(date);
+        setVersion(Date.now());
+        setLoading(false);
+        // setDate(date);
       })
+      //   toast.success("Data deleted successfully");
+      //   setDate(date);
+      // })
       .catch((err) => {
         alert(err);
       });
@@ -158,20 +198,6 @@ const Day = (props) => {
                 item
                 xs={12}
               >
-                <center>
-                  <div style={{ marginTop: "6px" }}>
-                    <Button
-                      style={{ marginLeft: "5px" }}
-                      variant={"outlined"}
-                      // onClick={logoutClick}
-                      endIcon={<ExitToAppIcon />}
-                      color={"secondary"}
-                    >
-                      PDF
-                    </Button>
-                  </div>
-                </center>
-
                 {getTotal() < 0 ? (
                   <div style={{ fontSize: "1.6em", color: "#aa0000" }}>
                     Total Today : {getTotal()}$
@@ -196,6 +222,7 @@ const Day = (props) => {
                   <Card className={classes.root1}>
                     <CardActionArea>
                       <CardContent>
+                        {/* <Console  version={version}/> */}
                         {dataPoint.type === 0 ? (
                           <div style={{ fontSize: "1.5em", color: "#aa0000" }}>
                             Cash Out
@@ -253,15 +280,6 @@ const Day = (props) => {
                           {/* On {dataPoint.timestamp.toLocaleDate() } */}
                           On {new Date(dataPoint.timestamp).toLocaleString()}
                         </Typography>
-                        {/* {
-                                                        dataPoint.type===0?(
-                                                            <Typography  variant="body2" color="textSecondary" component="p">
-                                                               Cause : {dataPoint.cause}
-                                                            </Typography>
-                                                        ):(
-                                                            <div/>
-                                                        )
-                                                    } */}
                         {dataPoint.type === 0 ? (
                           <Typography
                             variant="body2"
@@ -287,6 +305,17 @@ const Day = (props) => {
             })}
           </Grid>
         )}
+        <div style={{ marginTop: "6px" }}>
+          <Button
+            style={{ marginLeft: "5px", marginLeft: "90%" }}
+            variant={"outlined"}
+            // onClick={logoutClick}
+            endIcon={<ExitToAppIcon />}
+            color={"secondary"}
+          >
+            PDF
+          </Button>
+        </div>
       </div>
     </div>
   );
