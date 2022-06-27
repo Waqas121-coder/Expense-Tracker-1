@@ -14,7 +14,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { toast } from "react-toastify";
-import Console from "./Console";
+// import Console from "./Console";
 
 // import { doc, deleteDoc } from "firebase/firestore";
 
@@ -60,6 +60,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Day = (props) => {
+  // console.log(props.rerender);
+  const { rerender, setRerender } = props;
+  // console.log("rerender",rerender);
   // console.log(props);
   const classes = useStyles();
 
@@ -116,26 +119,20 @@ const Day = (props) => {
       .collection("transaction")
       .doc(dataPoint.id)
       .delete()
-      .then(() => {
-        firebase
+      .then( async() => {
+       await firebase
           .firestore()
           .collection("balance")
-          .get()
-          .then((data) => {
-            data.docs.forEach((item) => {
-              firebase
-                .firestore()
-                .collection("balance")
-                .doc(firebase.auth().currentUser.uid)
-                .update({
-                  balance: firebase.firestore.FieldValue.increment(
-                    parseFloat(dataPoint.amount)
-                  ),
-                });
-            });
+          .doc(firebase.auth().currentUser.uid)
+          .update({
+            balance: firebase.firestore.FieldValue.increment(
+              parseFloat(dataPoint.amount)
+            ),
           });
-        toast.success("Data deleted successfully");
+        setRerender(!rerender);
+        toast.success("Delete cash out successfully");
         setDate(date);
+        // console.log("day.js");
         setVersion(Date.now());
         setLoading(false);
       })
@@ -152,26 +149,19 @@ const Day = (props) => {
       .doc(dataPoint.id)
       .delete()
 
-      .then(() => {
-        firebase
-          .firestore()
-          .collection("balance")
-          .get()
-          .then((data) => {
-            data.docs.forEach(() => {
-              firebase
-                .firestore()
-                .collection("balance")
-                .doc(firebase.auth().currentUser.uid)
-                .update({
-                  balance: firebase.firestore.FieldValue.increment(
-                    -parseFloat(dataPoint.amount)
-                  ),
-                });
-              // console.log(item.data().balance);
-            });
-          });
-        toast.success("Data deleted successfully");
+      .then( async() => {
+        await firebase
+           .firestore()
+           .collection("balance")
+           .doc(firebase.auth().currentUser.uid)
+           .update({
+             balance: firebase.firestore.FieldValue.increment(
+               -parseFloat(dataPoint.amount)
+             ),
+           });
+         setRerender(!rerender);
+        toast.success("Delete cash in successfully");
+        setRerender(!rerender);
         setVersion(Date.now());
         setLoading(false);
         // setDate(date);
