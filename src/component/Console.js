@@ -51,6 +51,7 @@ import Day from "./Day";
 import Month from "./Month";
 import Year from "./Year";
 import { Check } from "@material-ui/icons";
+import { Link, useNavigate } from "react-router-dom";
 
 const drawerWidth = 250;
 
@@ -149,16 +150,24 @@ const Console = (props) => {
 
   const [withdrawDialog, setWithdrawDialog] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
+
+  const [commentDialog, setCommentDialog] = useState(false);
+  const [commentLoading, setCommentLoading] = useState(false);
   // for rerender eseEffect
   const [rerender, setRerender] = useState(false);
 
   const [devDialog, setDevDialog] = useState(false);
+  // const [FeedBack, setFeedBack] = useState(false);
 
   const amountRef = useRef();
   const causeRef = useRef();
   const causeRef1 = useRef();
+  const nameRef = useRef();
+  const emailRef = useRef();
+  const commentRef = useRef();
 
   const [anchorEl, setAnchorEl] = useState(null);
+  let navigate = useNavigate()
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -179,8 +188,8 @@ const Console = (props) => {
     firebase.auth().signOut();
   };
 
-  const syncBalance = async() => {
-   await  firebase
+  const syncBalance = async () => {
+    await firebase
       .firestore()
       .collection("balance")
       .doc(firebase.auth().currentUser.uid)
@@ -194,6 +203,32 @@ const Console = (props) => {
           syncBalance();
         }
       });
+  };
+
+  const commentClick = () => {
+
+    const name = nameRef.current.value;
+    const email = emailRef.current.value;
+    const comment = commentRef.current.value;
+    if (comment === '') showToast("Please add your message");
+    else {
+      setCommentLoading(true);
+      // console.log(Date.now());
+      firebase
+        .firestore()
+        .collection("feedback")
+        .add({
+          comment,
+          email,
+          name,
+        }).then(() => {
+          setCommentLoading(false);
+          document.getElementById("closeBtn").click()
+          showToast("Thanks for your feedback")
+          // navigate('/FeedBack')
+        })
+
+    }
   };
 
   const addClick = () => {
@@ -414,14 +449,15 @@ const Console = (props) => {
         <List>
           <ListItem
             onClick={() => {
-              setDevDialog(true);
+              // setFeedBack(true);
+              setCommentDialog(true);
             }}
             button
           >
             <ListItemIcon>
               <CodeIcon />
             </ListItemIcon>
-            <ListItemText primary={"Developers"} />
+            <ListItemText primary={"Feed Back"} />
           </ListItem>
         </List>
       </div>
@@ -430,26 +466,84 @@ const Console = (props) => {
 
   return (
     <div className={classes.root}>
-      <Dialog open={devDialog} fullWidth>
-        <DialogTitle>Developers</DialogTitle>
+      <Dialog open={commentDialog} fullWidth>
+        {commentLoading && <LinearProgress />}
+
+        <DialogTitle>Feedback Us 🤳</DialogTitle>
 
         <DialogContent fullWidth>
-          <Person
-            // image={'https://buet-edu-1.s3.amazonaws.com/auto_upload/0RMFi9mrPNe7mol2JwcZAf40F3n2/1618752944112.jpg'}
-            name={"Waqas Ali Siddiqi"}
-            email={"waqasalisiddiqi121@gmail.com"}
-          />
+          <center>
+            <TextField
+              fullWidth
+              inputRef={nameRef}
+              variant={"outlined"}
+              type={"name"}
+              label={"Name"}
+              value={firebase.auth().currentUser.displayName}
+
+            />
+            <br />
+            <br />
+
+            <TextField
+              fullWidth
+              inputRef={emailRef}
+              variant={"outlined"}
+              type={"email"}
+              label={"Email"}
+              // uid: firebase.auth().currentUser.uid,
+              value={firebase.auth().currentUser.email}
+            />
+            <br />
+            <br />
+
+            <TextField
+              fullWidth
+              multiline
+              rows={4}
+              rowsMax={4}
+              inputRef={commentRef}
+              variant={"outlined"}
+              // multiline
+              // rows={3}
+              label={"Message"}
+            />
+          </center>
+
+
           <Divider style={{ marginTop: "10px", marginBottom: "10px" }} />
         </DialogContent>
-
         <DialogActions>
           <Button
+            // id="closeBtn"
+            disabled={commentLoading}
             onClick={() => {
-              setDevDialog(false);
+                        navigate('/FeedBack')
+
+            }}
+            marginLeft={0}
+            color={"secondary"}
+          >
+            Show Feedbacks
+          </Button>
+
+          <Button
+            id="closeBtn"
+            disabled={commentLoading}
+            onClick={() => {
+              setCommentDialog(false);
             }}
             color={"secondary"}
           >
             Close
+          </Button>
+          <Button
+            disabled={commentLoading}
+            onClick={commentClick
+            }
+            color={"primary"}
+          >
+            Add Comment
           </Button>
         </DialogActions>
       </Dialog>
@@ -568,7 +662,37 @@ const Console = (props) => {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              <MenuItem onClick={logoutClick}>Logout</MenuItem>
+
+
+              <Dialog open={devDialog} fullWidth>
+                <DialogTitle>Developer</DialogTitle>
+
+                <DialogContent fullWidth>
+                  <Person
+                    // image={'https://buet-edu-1.s3.amazonaws.com/auto_upload/0RMFi9mrPNe7mol2JwcZAf40F3n2/1618752944112.jpg'}
+                    name={"Waqas Ali Siddiqi"}
+                    email={"waqasalisiddiqi121@gmail.com"}
+                  />
+                  <Divider style={{ marginTop: "10px", marginBottom: "10px" }} />
+                </DialogContent>
+
+                <DialogActions>
+                  <Button
+                    onClick={() => {
+                      setDevDialog(false);
+                    }}
+                    color={"secondary"}
+                  >
+                    Close
+                  </Button>
+                </DialogActions>
+              </Dialog>
+
+
+
+
+
+              <MenuItem onClick={() => { setDevDialog(true) }}>Developer</MenuItem>
             </Menu>
           </div>
         </Toolbar>

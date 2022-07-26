@@ -13,7 +13,7 @@ function YearData() {
     const componenetRef = useRef();
     const handlePrint = useReactToPrint({
         content: () => componenetRef.current,
-        documentTitle: 'emp-data',
+        documentTitle: 'One Year Data',
     });
 
     // const getTotal = () => {
@@ -59,7 +59,7 @@ function YearData() {
                     style={{
                         bottom: 20,
                         right: 20,
-                        position: 'absolute'
+                        position: 'fixed'
                     }}
                     variant={"outlined"}
                     onClick={handlePrint}

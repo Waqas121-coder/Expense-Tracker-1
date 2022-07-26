@@ -28,7 +28,7 @@ const Month=props=>{
     },[props.version])
 
     useEffect(()=>{
-        console.log(dataPoints)
+        // console.log(dataPoints)
     },[dataPoints])
 
     useEffect(()=>{
@@ -65,7 +65,7 @@ const Month=props=>{
                     }}
                     variant={"outlined"}
                       onClick={() => {
-                        navigate('/Month', { state: { data: dataPoints } })
+                        navigate('/Month', { state: { data: dataPoints, version:version ,date:date } })
                       }}
                     endIcon={<ExitToAppIcon />}
                     color={"secondary"}

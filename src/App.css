@@ -8,3 +8,10 @@
      padding: 0.5rem;
      text-align: left;
  }
+ @media print
+{    
+    button
+    {
+        display: none !important;
+    }
+}

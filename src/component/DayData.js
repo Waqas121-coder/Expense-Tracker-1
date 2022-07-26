@@ -13,7 +13,7 @@ function DayData() {
     const componenetRef = useRef();
     const handlePrint = useReactToPrint({
         content: () => componenetRef.current,
-        documentTitle: 'emp-data',
+        documentTitle: 'One Day Data',
     });
 
     const getTotal = () => {
@@ -36,7 +36,7 @@ function DayData() {
                         <tr>
                             <th style={{ width: "5vw", textAlign: "center" }} scope="col">#</th>
                             <th style={{ width: "10vw", textAlign: "center" }} scope="col">CASH</th>
-                            <th style={{ width: "10vw", textAlign: "center" }} scope="col">AMOUNT</th>
+                            <th style={{ width: "10vw", textAlign: "center" }} scope="col">ONE ITEM AMOUNT</th>
                             <th style={{ width: "10vw", textAlign: "center" }} scope="col">DATE & TIME</th>
                             <th style={{ width: "10vw", textAlign: "center" }} scope="col">CAUSE</th>
                         </tr>
@@ -48,18 +48,14 @@ function DayData() {
                                 <th style={{ width: "10vw", textAlign: 'center' }} scope="row">{
                                     data.type === 0 ? "Out" : "In"
                                 }</th>
-                                <td style={{ width: "10vw", textAlign: 'left' }}>{data.amount}</td>
+                                <td style={{ width: "20vw", textAlign: 'left' }}>{data.amount}</td>
                                 <td style={{ width: "25vw", textAlign: 'left' }}>{(new Date(data.timestamp).toLocaleString())}</td>
                                 <td style={{ width: "10vw", textAlign: 'left' }}>{data.cause}</td>
                             </tr>
                         ))}
-
-
                     </tbody>
                 </table>
-                <center> <h2>Total Amount : {getTotal()} </h2></center>
-
-
+                <center> <h2>ONE DAY TOTAL AMOUNT : {getTotal()} </h2></center>
                 <Button
                     style={{
                         bottom: 20,

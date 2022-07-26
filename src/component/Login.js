@@ -54,7 +54,7 @@ const Login = props=>{
                     <p>Welcome to</p>
                     </center>
                     <center>
-                    <h1>Income & Expense Tracker</h1>
+                    <h1>Income & Expense Generator</h1>
                     <small>Every Money Counts By This Tracker</small>
                     </center>
                    <center>
