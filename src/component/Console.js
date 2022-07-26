@@ -186,7 +186,7 @@ const Console = (props) => {
       .doc(firebase.auth().currentUser.uid)
       .get()
       .then((doc) => {
-        console.log(doc.data().balance);
+        // console.log(doc.data().balance);
 
         if (doc.exists) {
           setBalance(doc.data().balance);

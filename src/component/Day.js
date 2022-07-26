@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom"
 import { Grid } from "@material-ui/core";
 import { Button } from "@material-ui/core";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -14,6 +15,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { toast } from "react-toastify";
+import DayData from "./DayData"
 // import Console from "./Console";
 
 // import { doc, deleteDoc } from "firebase/firestore";
@@ -60,6 +62,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Day = (props) => {
+  let navigate = useNavigate();
   // console.log(props.rerender);
   const { rerender, setRerender } = props;
   // console.log("rerender",rerender);
@@ -111,6 +114,7 @@ const Day = (props) => {
     });
     return sum;
   };
+  
 
   function deletecashout(dataPoint) {
     setLoading(true);
@@ -119,8 +123,8 @@ const Day = (props) => {
       .collection("transaction")
       .doc(dataPoint.id)
       .delete()
-      .then( async() => {
-       await firebase
+      .then(async () => {
+        await firebase
           .firestore()
           .collection("balance")
           .doc(firebase.auth().currentUser.uid)
@@ -149,17 +153,17 @@ const Day = (props) => {
       .doc(dataPoint.id)
       .delete()
 
-      .then( async() => {
+      .then(async () => {
         await firebase
-           .firestore()
-           .collection("balance")
-           .doc(firebase.auth().currentUser.uid)
-           .update({
-             balance: firebase.firestore.FieldValue.increment(
-               -parseFloat(dataPoint.amount)
-             ),
-           });
-         setRerender(!rerender);
+          .firestore()
+          .collection("balance")
+          .doc(firebase.auth().currentUser.uid)
+          .update({
+            balance: firebase.firestore.FieldValue.increment(
+              -parseFloat(dataPoint.amount)
+            ),
+          });
+        setRerender(!rerender);
         toast.success("Delete cash in successfully");
         setRerender(!rerender);
         setVersion(Date.now());
@@ -295,17 +299,22 @@ const Day = (props) => {
             })}
           </Grid>
         )}
-        <div style={{ marginTop: "6px" }}>
-          <Button
-            style={{ marginLeft: "5px", marginLeft: "90%" }}
-            variant={"outlined"}
-            // onClick={logoutClick}
-            endIcon={<ExitToAppIcon />}
-            color={"secondary"}
-          >
-            PDF
-          </Button>
-        </div>
+        {dataPoints.length > 0 &&
+          <div style={{ width: "100%", textAlign: "right", marginTop: "6px" }}>
+            <Button
+              style={{ marginLeft: "5px" }}
+              variant={"outlined"}
+              onClick={() => {
+                navigate('/PDF', { state: { data: dataPoints } })
+              }}
+              endIcon={<ExitToAppIcon />}
+              color={"secondary"}
+            >
+              Table
+            </Button>
+          </div>
+        }
+
       </div>
     </div>
   );

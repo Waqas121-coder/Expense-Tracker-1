@@ -5,7 +5,14 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import DailyChart from "./DailyChart";
 import MonthlyChart from "./MonthlyChart";
 
+import { Button } from "@material-ui/core";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import { Link, useNavigate } from "react-router-dom"
+
 const Year=props=>{
+    let navigate = useNavigate();
+
+
     const [date,setDate]=useState(props.date)
     const [loading,setLoading]=useState(true)
     const [dataPoints,setDataPoints]=useState([])
@@ -48,6 +55,21 @@ const Year=props=>{
 
     return(
         <div>
+             <Button
+                    style={{
+                        bottom: 200,
+                        right: 20,
+                        position: 'absolute'
+                    }}
+                    variant={"outlined"}
+                      onClick={() => {
+                        navigate('/Year')
+                      }}
+                    endIcon={<ExitToAppIcon />}
+                    color={"secondary"}
+                >
+                    Table
+                </Button>
             {
                 loading?(
                     <LinearProgress/>

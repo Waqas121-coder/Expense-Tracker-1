@@ -3,8 +3,14 @@ import firebase from "firebase";
 import {showToast} from "../App";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import DailyChart from "./DailyChart";
+import { Button } from "@material-ui/core";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import { Link, useNavigate } from "react-router-dom"
+
 
 const Month=props=>{
+    
+  let navigate = useNavigate();
 
     const [date,setDate]=useState(props.date)
     const [loading,setLoading]=useState(true)
@@ -47,9 +53,26 @@ const Month=props=>{
             showToast(err.message)
         })
     },[date,props.version])
+    // console.log(dataPoints);
 
     return(
         <div>
+            <Button
+                    style={{
+                        bottom: 200,
+                        right: 20,
+                        position: 'absolute'
+                    }}
+                    variant={"outlined"}
+                      onClick={() => {
+                        navigate('/Month', { state: { data: dataPoints } })
+                      }}
+                    endIcon={<ExitToAppIcon />}
+                    color={"secondary"}
+                >
+                    Table
+                </Button>
+                <div>
             {
                 loading?(
                     <LinearProgress/>
@@ -59,6 +82,7 @@ const Month=props=>{
                     </div>
                 )
             }
+            </div>
         </div>
     )
 }

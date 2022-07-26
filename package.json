@@ -16,7 +16,9 @@
     "react-datepicker": "^3.7.0",
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.3",
+    "react-router-dom": "^6.3.0",
     "react-scripts": "4.0.3",
+    "react-to-print": "^2.14.7",
     "react-toastify": "^7.0.3"
   },
   "scripts": {
