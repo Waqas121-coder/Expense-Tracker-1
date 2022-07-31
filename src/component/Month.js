@@ -48,8 +48,8 @@ const Month=props=>{
                 setDataPoints(data)
                 setLoading(false)
             }).catch(err=>{
+                console.log(err)
             setLoading(false)
-            console.log(err)
             showToast(err.message)
         })
     },[date,props.version])

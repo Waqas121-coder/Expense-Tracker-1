@@ -17,7 +17,7 @@ function MonthData() {
 
 
 
-    console.log(schemaData);
+    // console.log(schemaData);
 
 
     const location = useLocation();
@@ -42,13 +42,23 @@ function MonthData() {
     // const monthNames = ["January", "February", "March", "April", "May", "June",
     //     "July", "August", "September", "October", "November", "December"
     // ];
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+];
 
-    const isLeapYear = year => {
-        if (year % 400 === 0) return 1
-        if (year % 100 === 0) return 0
-        if (year % 4 === 0) return 1
-        return 0
-    }
+const isLeapYear=year=>{
+    if(year%400===0)return 1
+    if(year%100===0)return 0
+    if(year%4===0) return 1
+    return 0
+}
+
+var nDays=[
+    [31,28,31,30,31,30,31,31,30,31,30,31],
+    [31,29,31,30,31,30,31,31,30,31,30,31]
+]
+
+
 
     var nDays = [
         [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
@@ -77,7 +87,7 @@ function MonthData() {
         })
         console.log(userdata);
 
-        // console.log(data);
+        console.log(data);
 
         setSchemaData(userdata)
         setCondition(true)
@@ -89,9 +99,6 @@ function MonthData() {
     return (
         <>
             <div ref={componenetRef} style={{ width: '100%', height: window.innerheight }}>
-
-
-
                 <table style={{ margin: "auto", marginTop: "40px" }}>
                     <thead>
                         <tr>
@@ -103,8 +110,7 @@ function MonthData() {
                         </tr>
                     </thead>
                     <tbody>
-
-                        { condition && schemaData.map((data, ind) => (
+                        {  condition && schemaData.map((data, ind) => (
                             // console.log(data)
                             < tr key = { ind } >
                                 <td style={{ width: "10vw", textAlign: 'center' }}>{ind+1}</td>
@@ -114,13 +120,9 @@ function MonthData() {
                                 <td style={{ width: "10vw", textAlign: 'center' }}>{data.val}</td>               
                             </tr>
                          ))}
-
-
                 </tbody>
             </table>
             <center> <h2>ONE MONTH TOTAL AMOUNT : {getTotal()}</h2></center>
-
-
             <Button
                 style={{
                     bottom: 20,
@@ -138,5 +140,4 @@ function MonthData() {
         </>
     )
 }
-
 export default MonthData

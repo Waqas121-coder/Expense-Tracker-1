@@ -63,7 +63,7 @@ const Year=props=>{
                     }}
                     variant={"outlined"}
                       onClick={() => {
-                        navigate('/Year')
+                        navigate('/Year', { state: { data: dataPoints, version:version ,date:date } })
                       }}
                     endIcon={<ExitToAppIcon />}
                     color={"secondary"}

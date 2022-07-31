@@ -514,7 +514,7 @@ const Console = (props) => {
           <Divider style={{ marginTop: "10px", marginBottom: "10px" }} />
         </DialogContent>
         <DialogActions>
-          <Button
+          {/* <Button
             // id="closeBtn"
             disabled={commentLoading}
             onClick={() => {
@@ -525,7 +525,7 @@ const Console = (props) => {
             color={"secondary"}
           >
             Show Feedbacks
-          </Button>
+          </Button> */}
 
           <Button
             id="closeBtn"
