@@ -48,9 +48,9 @@ function DayData() {
                                 <th style={{ width: "10vw", textAlign: 'center' }} scope="row">{
                                     data.type === 0 ? "Out" : "In"
                                 }</th>
-                                <td style={{ width: "20vw", textAlign: 'left' }}>{data.amount}</td>
-                                <td style={{ width: "25vw", textAlign: 'left' }}>{(new Date(data.timestamp).toLocaleString())}</td>
-                                <td style={{ width: "10vw", textAlign: 'left' }}>{data.cause}</td>
+                                <td style={{ width: "15vw", textAlign: 'left' }}>{data.amount}</td>
+                                <td style={{ width: "15vw", textAlign: 'center' }}>{(new Date(data.timestamp).toLocaleString())}</td>
+                                <td style={{ width: "20vw", textAlign: 'left' }}>{data.cause}</td>
                             </tr>
                         ))}
                     </tbody>

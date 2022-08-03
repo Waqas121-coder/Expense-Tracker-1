@@ -41,7 +41,9 @@ function YearData() {
       else data[d.month] += d.amount;
       let userdataval = [];
       data.map((val, ind) => {
+        if (ind>0){
         userdataval.push({ val });
+      }
       });
       setSchemaData(userdataval);
       setCondition(true);
